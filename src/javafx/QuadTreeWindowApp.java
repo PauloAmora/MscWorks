@@ -12,7 +12,7 @@ public class QuadTreeWindowApp extends Application {
 	public void start(Stage stage) throws Exception {
 		Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("javafx//QuadTreeWindow.fxml"));
 
-		Scene scene = new Scene(root, 300, 300);
+		Scene scene = new Scene(root, 512, 512);
 
 		stage.setTitle("FXML Welcome");
 		stage.setScene(scene);
