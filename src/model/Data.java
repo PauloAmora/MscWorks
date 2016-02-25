@@ -1,7 +1,7 @@
 package model;
 
 public class Data {
-	public Double x;
-	public Double y;
+	public int x;
+	public int y;
 	//public String data;
 }
