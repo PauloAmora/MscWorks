@@ -7,8 +7,11 @@ public class Node {
 	public Node southWest;
 	public Node northWest;
 	public Data data;
-	
+	public Rect rect;
 	public Node(){
+	}
+	public boolean isFull(){
+		return (this.northEast != null) && (this.northWest != null) && (this.southEast != null) && (this.southWest != null);
 	}
 	
 }
