@@ -6,11 +6,11 @@ import model.Node;
 public class QuadTree {
 
 	static Node root = null;
-	int maxX = 256;
-	int maxY = 256;
+	int maxX = 500;
+	int maxY = 500;
 	
 	public void addNode(int x, int y, int currentX, int currentY, Node startNode){
-		if((x < -maxX || x>maxX) && (y < -maxY || y > maxY)){
+		if((x < 0 || x>maxX) && (y < 0 || y > maxY)){
 			System.out.println("ERROR!");
 			return;
 		}
@@ -49,7 +49,7 @@ public class QuadTree {
 						Data tempData = new Data();
 						tempData = parentNode.data;
 						parentNode.data = null;
-						addNode(tempData.x + currentX, tempData.y + currentY, currentX, currentY, parentNode);
+						addNode(tempData.x, tempData.y, currentX, currentY, parentNode);
 					}
 					break;
 				}
@@ -58,51 +58,31 @@ public class QuadTree {
 				parentNode = currentNode;
 				if(east && north){
 					currentNode = currentNode.northEast;
-					if (currentX == 0.0){
-						currentX = maxX/2;
-					}else{
-						currentX /= 2;
-					}if (currentY == 0.0){
-						currentY = maxY/2;
-					}else{
-						currentY /= 2;
-					}
+					
+						currentX += currentX/2;
+						currentY += currentY/2;
+					
 				}
 				if(east && !north){
 					currentNode = currentNode.southEast;
-					if (currentX == 0.0){
-						currentX = maxX/2;
-					}else{
-						currentX /= 2;
-					}if (currentY == 0.0){
-						currentY = -maxY/2;
-					}else{
-						currentY /= 2;
-					}
+				
+						currentX += currentX/2;
+						currentY -= currentY/2;
+					
 				}
 				if(!east && north){
 					currentNode = currentNode.northWest;
-					if (currentX == 0.0){
-						currentX = -maxX/2;
-					}else{
-						currentX /= 2;
-					}if (currentY == 0.0){
-						currentY = maxY/2;
-					}else{
-						currentY /= 2;
-					}
+					
+						currentX -= currentX/2;
+						currentY += currentY/2;
+					
 				}
 				if(!east && !north){
 					currentNode = currentNode.southWest;
-					if (currentX == 0.0){
-						currentX = -maxX/2;
-					}else{
-						currentX /= 2;
-					}if (currentY == 0.0){
-						currentY = -maxY/2;
-					}else{
-						currentY /= 2;
-					}
+					
+						currentX -= currentX/2;
+						currentY -= currentY/2;
+					
 				}
 			}
 		}
@@ -120,8 +100,8 @@ public class QuadTree {
 	
 	public static void main(String[] args) {
 		QuadTree tree = new QuadTree();
-		tree.addNode(16, 27, 0, 0, root);
-		tree.addNode(22, 17, 0, 0, root);
+		tree.addNode(29, 500-17, 250, 250, root);
+		tree.addNode(57, 500-41, 250, 250, root);
 		Node rootLocal = root;
 		//tree.addNode(153.0, 121.0, 0.0, 0.0);
 		System.out.println("debug pause");
