@@ -10,8 +10,8 @@ public class Node {
 	public Rect rect;
 	public Node(){
 	}
-	public boolean isFull(){
-		return (this.northEast != null) && (this.northWest != null) && (this.southEast != null) && (this.southWest != null);
+	public boolean isLeaf(){
+		return (this.northEast == null) && (this.northWest == null) && (this.southEast == null) && (this.southWest == null);
 	}
 	
 }
