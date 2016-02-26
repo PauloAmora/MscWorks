@@ -1,5 +1,8 @@
 package quadtree;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import model.Data;
 import model.Node;
 import model.Rect;
@@ -10,7 +13,20 @@ public class QuadTree {
 	int maxX = 500;
 	int maxY = 500;
 	public int height = 0;
-
+	public List<Node> treeAsList = null;
+	
+	
+	public void toList(List<Node> list, Node toAdd){
+		list.add(toAdd);
+		if(toAdd.isLeaf())
+			return;
+		toList(list, toAdd.northEast);
+		toList(list, toAdd.northWest);
+		toList(list, toAdd.southEast);
+		toList(list, toAdd.southWest);
+	}
+	
+	
 	public boolean insert(int x, int y, Node start) {
 		boolean insertParamData = false;
 		boolean insertOwnData = false;
@@ -77,9 +93,11 @@ public class QuadTree {
 		QuadTree tree = new QuadTree();
 		tree.root = new Node();
 		tree.root.rect = new Rect(0, 0, 500, 500);
+		tree.treeAsList = new ArrayList<Node>();
 		tree.insert(53, 38, tree.root);
 		tree.insert(394, 372, tree.root);
 		tree.insert(90, 71, tree.root);
+		tree.toList(tree.treeAsList, tree.root);
 		System.out.println("debug pause");
 	}
 
