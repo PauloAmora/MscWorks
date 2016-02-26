@@ -6,9 +6,10 @@ import model.Rect;
 
 public class QuadTree {
 
-	Node root = null;
+	public Node root = null;
 	int maxX = 500;
 	int maxY = 500;
+	public int height = 0;
 
 	public boolean insert(int x, int y, Node start) {
 		boolean insertParamData = false;
@@ -33,6 +34,7 @@ public class QuadTree {
 			start.southEast.rect = start.rect.bottomRight();
 			start.southWest = new Node();
 			start.southWest.rect = start.rect.bottomLeft();
+			height++;
 		}
 		if (start.data != null) {
 			Data tempData = new Data();
