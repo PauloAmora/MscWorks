@@ -26,6 +26,113 @@ public class QuadTree {
 		toList(list, toAdd.southWest);
 	}
 	
+	public void insertOrDelete(int x, int y, Node start) {
+		if(this.treeAsList == null)
+			this.treeAsList = new ArrayList<Node>();
+		toList(this.treeAsList, start);
+		boolean isDelete = false;
+		for(Node n : this.treeAsList){
+			isDelete = containsData(n, x, y);
+			if(isDelete)
+				break;
+		}
+		if(isDelete)
+			delete(x, y, start);
+		else
+			insert(x, y, start);
+		
+		
+	}
+	
+	public boolean containsData(Node test, int x, int y){
+		return test.data != null ? test.data.x == x && test.data.y == y : false;
+		
+	}
+	
+	public boolean delete(int x, int y, Node start) {
+		boolean deleteParamData = false;
+	
+		if (!start.rect.contains(x, y)) {
+			return false;
+		}
+
+		if (start.isLeaf() && start.data != null && containsData(start, x, y)) {
+			start.data = null;
+			return true;
+		}
+		if (start.northEast != null) {
+			int countLeaves = 0;
+			boolean north = false;
+			boolean east = false;
+			if(start.northEast.data != null && start.hasOnlyLeaves()){
+				north = true;
+				east = true;
+				countLeaves++;
+			}
+			if(start.northWest.data != null && start.hasOnlyLeaves()){
+				north = true;
+				east = false;
+				countLeaves++;
+			}
+			if(start.southEast.data != null && start.hasOnlyLeaves()){
+				north = false;
+				east = true;
+				countLeaves++;
+			}
+			if(start.southWest.data != null && start.hasOnlyLeaves()){
+				north = false;
+				east = false;
+				countLeaves++;
+			}
+			if(countLeaves == 1){
+				if(north && east)
+					start.data = start.northEast.data;
+				if(north && !east)
+					start.data = start.northWest.data;
+				if(!north && east)
+					start.data = start.southEast.data;
+				if(!north && !east)
+					start.data = start.southWest.data;
+				start.northEast = null;
+				start.northWest = null;
+				start.southEast = null;
+				start.southWest = null;
+				height--;
+			}
+		}
+		/*if (start.data != null) {
+			Data tempData = new Data();
+			tempData = start.data;
+			start.data = null;
+			if (insert(tempData.x, tempData.y, start.northEast)) {
+				insertOwnData = true;
+			}
+			if (insert(tempData.x, tempData.y, start.northWest)) {
+				insertOwnData = true;
+			}
+			if (insert(tempData.x, tempData.y, start.southEast)) {
+				insertOwnData = true;
+			}
+			if (insert(tempData.x, tempData.y, start.southWest)) {
+				insertOwnData = true;
+			}
+		}*/
+		if (delete(x, y, start.northEast)) {
+			deleteParamData = true;
+		}
+		if (delete(x, y, start.northWest)) {
+			deleteParamData = true;
+		}
+		if (delete(x, y, start.southEast)) {
+			deleteParamData = true;
+		}
+		if (delete(x, y, start.southWest)) {
+			deleteParamData = true;
+		}
+
+		return deleteParamData;
+	}
+	
 	
 	public boolean insert(int x, int y, Node start) {
 		boolean insertParamData = false;
@@ -94,9 +201,11 @@ public class QuadTree {
 		tree.root = new Node();
 		tree.root.rect = new Rect(0, 0, 500, 500);
 		tree.treeAsList = new ArrayList<Node>();
-		tree.insert(53, 38, tree.root);
-		tree.insert(394, 372, tree.root);
-		tree.insert(90, 71, tree.root);
+		tree.insertOrDelete(53, 38, tree.root);
+		tree.insertOrDelete(394, 372, tree.root);
+		tree.insertOrDelete(90, 71, tree.root);
+		tree.insertOrDelete(90, 71, tree.root);
+		tree.insertOrDelete(394, 372, tree.root);
 		tree.toList(tree.treeAsList, tree.root);
 		System.out.println("debug pause");
 	}
