@@ -1,6 +1,7 @@
-package javafx;
+package javafxclass;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
@@ -10,6 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import model.Node;
 
 public class QuadTreeMainController implements Initializable {
 
@@ -43,7 +45,7 @@ public class QuadTreeMainController implements Initializable {
 				QuadTreeMainWindow.getChildren().add(dot);
 				if (prevHeight != application.quadTree.height) {
 					redrawTree();
-					
+
 				}
 			}
 		}
@@ -52,25 +54,31 @@ public class QuadTreeMainController implements Initializable {
 
 	private void redrawTree() {
 		QuadTreeMainWindow.getChildren().clear();
-		for(int i = 0; i < application.quadTree.height; i++){
-			for (int j = 0; j < Math.pow(2, 2*i); j++){
-				
+		if (application.quadTree.treeAsList == null)
+			application.quadTree.treeAsList = new ArrayList<Node>();
+		application.quadTree.treeAsList.clear();
+		application.quadTree.toList(application.quadTree.treeAsList, application.quadTree.root);
+		for (int i = 0; i < application.quadTree.treeAsList.size(); i++) {
+			Node tmp = application.quadTree.treeAsList.get(i);
+			if (tmp.isLeaf()) {
+				if (tmp.data != null) {
+					Rectangle dot = new Rectangle(tmp.data.x, tmp.data.y, 1, 1);
+					dot.setFill(null);
+					dot.setStroke(Color.RED);
+					dot.setStrokeWidth(2);
+					QuadTreeMainWindow.getChildren().add(dot);
+				}
+			} else {
+				drawBox(tmp.rect.originX, tmp.rect.originY, tmp.rect.width, tmp.rect.height);
+
 			}
 		}
-		Rectangle dot = new Rectangle(event.getSceneX(), event.getSceneY(), 1, 1);
-		dot.setFill(null);
-		dot.setStroke(Color.RED);
-		dot.setStrokeWidth(2);
-		QuadTreeMainWindow.getChildren().add(dot);
-		
-		drawBox(application.quadTree.root.rect.originX, application.quadTree.root.rect.originY,
-				application.quadTree.root.rect.width, application.quadTree.root.rect.height);
-		
+
 	}
 
 	void drawBox(int originX, int originY, int width, int height) {
-		Line verticalLine = new Line(width/2, originY, width/2, height);
-		Line horizontalLine = new Line(originX, height/2, width, height/2);
+		Line verticalLine = new Line(originX+(width / 2), originY, originX+(width / 2), originY + height);
+		Line horizontalLine = new Line(originX, originY + (height / 2), originX+width, originY + (height / 2));
 
 		// Line verticalLine = new Line(QuadTreeMainWindow.getWidth()/2, 0,
 		// QuadTreeMainWindow.getWidth()/2, QuadTreeMainWindow.getHeight());
