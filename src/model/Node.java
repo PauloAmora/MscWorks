@@ -16,5 +16,21 @@ public class Node {
 	public boolean hasOnlyLeaves(){
 		return this.northEast.isLeaf() && this.southEast.isLeaf() && this.northWest.isLeaf() && this.northWest.isLeaf();
 	}
+	public int getNumberOfDataChilds() {
+		int numberOfDataChilds = 0;
+		if(this.northEast.data != null){
+			numberOfDataChilds++;
+		}
+		if(this.northWest.data != null){
+			numberOfDataChilds++;
+		}
+		if(this.southEast.data != null){
+			numberOfDataChilds++;
+		}
+		if(this.southWest.data != null){
+			numberOfDataChilds++;
+		}
+		return numberOfDataChilds;
+	}
 	
 }
