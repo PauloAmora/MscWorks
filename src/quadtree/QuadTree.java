@@ -49,142 +49,77 @@ public class QuadTree {
 
 	}
 
-	public boolean delete(int x, int y, Node start) {
-		Region deleteRegion = null;
-		boolean deleteParamData = false;
-
+	public void delete(int x, int y, Node start) {
+		
 		if (start == null)
-			return false;
+			return;
 		if (start.isLeaf())
-			return false;
+			return;
 		if (!start.rect.contains(x, y)) {
-			return false;
+			return;
 		}
-
-		if (delete(x, y, start.northEast)) {
-			deleteParamData = true;
+		delete(x,y,start.northEast);
+		delete(x,y,start.northWest);
+		delete(x,y,start.southEast);
+		delete(x,y,start.southWest);
+		if(start.northEast.data != null && start.northEast.data.equals(x, y)){
+			start.northEast.data = null;
 		}
-		if (delete(x, y, start.northWest)) {
-			deleteParamData = true;
+		if(start.northWest.data != null && start.northWest.data.equals(x, y)){
+			start.northWest.data = null;
 		}
-		if (delete(x, y, start.southEast)) {
-			deleteParamData = true;
+		if(start.southEast.data != null && start.southEast.data.equals(x, y)){
+			start.southEast.data = null;
 		}
-		if (delete(x, y, start.southWest)) {
-			deleteParamData = true;
-
+		if(start.southWest.data != null && start.southWest.data.equals(x, y)){
+			start.southWest.data = null;
 		}
+		if(mustPromoteChild(start)){
+			promoteChild(start);
+		}
+	}
 
-		if (start.northEast != null) {
-			boolean isRemovalInLeaf = false;
-			if (!isRemovalInLeaf && start.northEast.data != null && start.northEast.data.equals(x, y)) {
-				isRemovalInLeaf = true;
-			}
-			if (!isRemovalInLeaf && start.northWest.data != null && start.northWest.data.equals(x, y)) {
-				isRemovalInLeaf = true;
-			}
-			if (!isRemovalInLeaf && start.southEast.data != null && start.southEast.data.equals(x, y)) {
-				isRemovalInLeaf = true;
-			}
-			if (!isRemovalInLeaf && start.southWest.data != null && start.southWest.data.equals(x, y)) {
-				isRemovalInLeaf = true;
-			}
+	private void promoteChild(Node start) {
+		Region r = detectRegionWithData(start);
+		switch(r){
+		case NORTHEAST:
+			start.data = start.northEast.data;
+			break;
+		case NORTHWEST:
+			start.data = start.northWest.data;
+			break;
+		case SOUTHEAST:
+			start.data = start.southEast.data;
+			break;
+		case SOUTHWEST:
+			start.data = start.southWest.data;
+			break;
+		default:
+			break;
+		}
+		start.northEast = null;
+		start.northWest = null;
+		start.southEast = null;
+		start.southWest = null;
+		height--;
+		
+	}
 
-			int countLeaves = 0;
-			if (start.northEast.data != null && start.hasOnlyLeaves()) {
-				deleteRegion = Region.NORTHEAST;
-				countLeaves++;
-			}
-			if (start.northWest.data != null && start.hasOnlyLeaves()) {
-				deleteRegion = Region.NORTHWEST;
-				countLeaves++;
-			}
-			if (start.southEast.data != null && start.hasOnlyLeaves()) {
-				deleteRegion = Region.SOUTHEAST;
-				countLeaves++;
-			}
-			if (start.southWest.data != null && start.hasOnlyLeaves()) {
-				deleteRegion = Region.SOUTHWEST;
-				countLeaves++;
-			}
-			if (countLeaves > 2) {
-					switch (deleteRegion) {
-					case NORTHEAST:
-						start.northEast.data = null;
-						break;
-					case NORTHWEST:
-						start.northWest.data = null;
-						break;
-					case SOUTHEAST:
-						start.southEast.data = null;
-						break;
-					case SOUTHWEST:
-						start.southWest.data = null;
-						break;
-					default:
-						break;
+	
+	private Region detectRegionWithData(Node start) {
+		if(start.northEast.data != null)
+			return Region.NORTHEAST;
+		if(start.northWest.data != null)
+			return Region.NORTHWEST;
+		if(start.southEast.data != null)
+			return Region.SOUTHEAST;
+		if(start.southWest.data != null)
+			return Region.SOUTHWEST;
+		return null;
+	}
 
-					}
-				}
-
-				if (countLeaves == 2 && isRemovalInLeaf) {
-					deleteParamData = false;
-					if (start.northEast.data != null && !start.northEast.data.equals(x, y)) {
-						start.data = start.northEast.data;
-						deleteParamData = true;
-					}
-					if (start.northWest.data != null && !start.northWest.data.equals(x, y)) {
-						start.data = start.northWest.data;
-						deleteParamData = true;
-					}
-					if (start.southEast.data != null && !start.southEast.data.equals(x, y)) {
-						start.data = start.southEast.data;
-						deleteParamData = true;
-					}
-					if (start.southWest.data != null && !start.southWest.data.equals(x, y)) {
-						start.data = start.southWest.data;
-						deleteParamData = true;
-					}
-					if (deleteParamData) {
-						start.northEast = null;
-						start.northWest = null;
-						start.southEast = null;
-						start.southWest = null;
-						height--;
-					}
-					deleteParamData = true;
-				}
-				if (countLeaves == 1) {
-					deleteParamData = false;
-					if (start.northEast.data != null) {
-						start.data = start.northEast.data;
-						deleteParamData = true;
-					}
-					if (start.northWest.data != null) {
-						start.data = start.northWest.data;
-						deleteParamData = true;
-					}
-					if (start.southEast.data != null) {
-						start.data = start.southEast.data;
-						deleteParamData = true;
-					}
-					if (start.southWest.data != null) {
-						start.data = start.southWest.data;
-						deleteParamData = true;
-					}
-					if (deleteParamData) {
-						start.northEast = null;
-						start.northWest = null;
-						start.southEast = null;
-						start.southWest = null;
-						height--;
-					}
-					deleteParamData = true;
-				}
-			}
-
-		return deleteParamData;
-
+	private boolean mustPromoteChild(Node start) {
+		return start.getNumberOfDataChilds() == 1;
 	}
 
 	public boolean insert(int x, int y, Node start) {
@@ -257,8 +192,8 @@ public class QuadTree {
 		tree.insertOrDelete(53, 38, tree.root);
 		tree.insertOrDelete(394, 372, tree.root);
 		tree.insertOrDelete(90, 71, tree.root);
+		tree.insertOrDelete(394, 372, tree.root);
 		tree.insertOrDelete(90, 71, tree.root);
-		// tree.insertOrDelete(394, 372, tree.root);
 		tree.treeAsList.clear();
 		tree.toList(tree.treeAsList, tree.root);
 		System.out.println("debug pause");
